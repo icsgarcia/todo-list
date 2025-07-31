@@ -10,7 +10,7 @@ const port = process.env.PORT || 3000;
 
 app.use(
     cors({
-        origin: "https://todo-list-red-sigma-41.vercel.app",
+        origin: process.env.FRONTEND_URL,
     })
 );
 app.use(express.json());
