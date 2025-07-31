@@ -1,12 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
-const {
-    createUser,
-    getUsers,
-    getUserByEmail,
-    getUserById,
-} = require("../models/userModel");
+const db = require("../configs/db");
 const { generateAccessToken } = require("../middlewares/authMiddleware");
 
 dotenv.config();
@@ -16,12 +11,14 @@ let refreshTokens = [];
 const login = async (req, res) => {
     const { email, password } = req.body;
     try {
-        const user = await getUserByEmail(email);
-        const isMatch = await bcrypt.compare(password, user.password);
+        const [user] = await db.query(`SELECT * FROM users WHERE email = ?`, [
+            email,
+        ]);
+        const isMatch = await bcrypt.compare(password, user[0].password);
         if (isMatch) {
-            const accessToken = generateAccessToken(user);
+            const accessToken = generateAccessToken(user[0]);
             const refreshToken = jwt.sign(
-                user,
+                user[0],
                 process.env.REFRESH_TOKEN_SECRET
             );
             refreshTokens.push(refreshToken);
@@ -46,7 +43,11 @@ const register = async (req, res) => {
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
         const user = { username, email, password: hashedPassword };
-        await createUser(user);
+        await db.query(
+            `INSERT INTO users(username, email, password)
+            VALUES (?, ?, ?)`,
+            [user.username, user.email, user.password]
+        );
         return res
             .status(201)
             .json({ message: "User registered successfully" });

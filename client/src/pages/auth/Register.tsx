@@ -16,7 +16,10 @@ function Register() {
 
     const mutation = useMutation({
         mutationFn: (formData: typeof form) => {
-            return axios.post("http://localhost:3000/auth/register", formData);
+            return axios.post(
+                `${import.meta.env.VITE_APP_API_URL}/auth/register`,
+                formData
+            );
         },
         onSuccess: () => {
             showSuccessToast("Account created successfully! Please log in.");

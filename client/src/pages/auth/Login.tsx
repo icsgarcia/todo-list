@@ -16,7 +16,10 @@ function Login() {
 
     const mutation = useMutation({
         mutationFn: (formData: typeof form) => {
-            return axios.post("http://localhost:3000/auth/login", formData);
+            return axios.post(
+                `${import.meta.env.VITE_APP_API_URL}/auth/login`,
+                formData
+            );
         },
         onSuccess: (response) => {
             login(response.data.accessToken);

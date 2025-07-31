@@ -20,11 +20,14 @@ function Todo() {
         queryKey: ["todo", id],
         queryFn: async () => {
             const token = localStorage.getItem("token");
-            return await axios.get(`http://localhost:3000/todos/${id}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
+            return await axios.get(
+                `${import.meta.env.VITE_APP_API_URL}/todos/${id}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
         },
         enabled: isEditing,
         staleTime: Infinity,
@@ -44,14 +47,18 @@ function Todo() {
             const token = localStorage.getItem("token");
 
             if (!isEditing) {
-                return axios.post("http://localhost:3000/todos", formData, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
+                return axios.post(
+                    `${import.meta.env.VITE_APP_API_URL}/todos`,
+                    formData,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
             } else {
                 return axios.patch(
-                    `http://localhost:3000/todos/${id}`,
+                    `${import.meta.env.VITE_APP_API_URL}/todos/${id}`,
                     formData,
                     {
                         headers: {

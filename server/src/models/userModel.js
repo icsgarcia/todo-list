@@ -1,52 +1,14 @@
 const db = require("../configs/db");
 
-const createUser = async ({ username, email, password }) => {
-    try {
-        const [result] = await db.query(
-            `INSERT INTO users(username, email, password)
-            VALUES (?, ?, ?)`,
-            [username, email, password]
-        );
-        return result;
-    } catch (error) {
-        console.error("Error creating user:", error);
-    }
-};
-
-const getUsers = async () => {
-    try {
-        const [result] = await db.query(`SELECT * FROM users`);
-        return result;
-    } catch (error) {
-        console.error("Error fetching users:", error);
-    }
-};
-
-const getUserById = async (id) => {
-    try {
-        const [result] = await db.query(`SELECT * FROM users WHERE id = ?`, [
-            id,
-        ]);
-        return result[0];
-    } catch (error) {
-        console.error("Error fetching user by ID:", error);
-    }
-};
-
-const getUserByEmail = async (email) => {
-    try {
-        const [result] = await db.query(`SELECT * FROM users WHERE email = ?`, [
-            email,
-        ]);
-        return result[0];
-    } catch (error) {
-        console.error("Error fetching user by email:", error);
-    }
-};
-
-module.exports = {
-    createUser,
-    getUsers,
-    getUserById,
-    getUserByEmail,
-};
+try {
+    db.query(`
+CREATE TABLE IF NOT EXISTS users(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(255) NOT NULL UNIQUE,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL
+)`);
+    console.log("Users table created successfully or already exists.");
+} catch (error) {
+    console.log(error);
+}

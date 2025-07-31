@@ -18,22 +18,28 @@ function App() {
         queryKey: ["todos"],
         queryFn: async () => {
             const token = localStorage.getItem("token");
-            return await axios.get("http://localhost:3000/todos", {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
+            return await axios.get(
+                `${import.meta.env.VITE_APP_API_URL}/todos`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
         },
     });
 
     const mutation = useMutation({
         mutationFn: (id: number) => {
             const token = localStorage.getItem("token");
-            return axios.delete(`http://localhost:3000/todos/${id}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
+            return axios.delete(
+                `${import.meta.env.VITE_APP_API_URL}/todos/${id}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["todos"] });
