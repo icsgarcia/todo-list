@@ -6,8 +6,6 @@ const { generateAccessToken } = require("../middlewares/authMiddleware");
 
 dotenv.config();
 
-let refreshTokens = [];
-
 const login = async (req, res) => {
     const { email, password } = req.body;
     try {
@@ -17,16 +15,10 @@ const login = async (req, res) => {
         const isMatch = await bcrypt.compare(password, user[0].password);
         if (isMatch) {
             const accessToken = generateAccessToken(user[0]);
-            const refreshToken = jwt.sign(
-                user[0],
-                process.env.REFRESH_TOKEN_SECRET
-            );
-            refreshTokens.push(refreshToken);
+
             return res.status(200).json({
                 message: "Login successful",
-                user,
                 accessToken,
-                refreshToken,
             });
         } else {
             return res
@@ -56,25 +48,8 @@ const register = async (req, res) => {
     }
 };
 
-const getRefreshToken = (req, res) => {
-    const refreshToken = req.body.token;
-    if (refreshToken == null) return res.sendStatus(401);
-    if (!refreshTokens.includes(refreshToken)) {
-        return res.sendStatus(403);
-    }
-    jwt.sign(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
-        if (err) return res.sendStatus(403);
-        const accessToken = generateAccessToken({
-            name: user.name,
-            email: user.email,
-        });
-        res.json({ accessToken });
-    });
-};
-
 const logout = (req, res) => {
-    refreshTokens = refreshTokens.filter((token) => token !== req.body.token);
     res.sendStatus(204);
 };
 
-module.exports = { login, register, getRefreshToken, logout };
+module.exports = { login, register, logout };

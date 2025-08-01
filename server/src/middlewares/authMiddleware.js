@@ -16,9 +16,10 @@ const authenticateToken = (req, res, next) => {
 };
 
 const generateAccessToken = (user) => {
-    return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
-        expiresIn: "30m",
-    });
+    return jwt.sign(
+        { id: user.id, email: user.email },
+        process.env.ACCESS_TOKEN_SECRET
+    );
 };
 
 module.exports = { authenticateToken, generateAccessToken };
